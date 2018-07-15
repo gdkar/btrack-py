@@ -34,6 +34,24 @@ an attempt at working through ideas for a BTrack replacement in a flexible scrip
         +   every time we retroactively invalidate tempo estimates, invalidate back to the last valid tempo estimate, obvs.
 
 
+### time bases
+
+if the most recent audio sample processed was N_a, then the most recent odf sample generated should correspond to ( N_a - ( odf_window // 2)) possibly with some additional adjustment by some multiple of odf_hop. to keep things tidy, let's say that the effective time for odf sample N_odf should have been audio sample ( odf_hop * N_odf ), which means that odf sample N_odf should have been generated from the range of input data ending at ( N_odf * odf_hop ) + ( odf_window // 2). ( possibly plus an additional odf_hop or so because that sample actually also uses the two previous hops values, using the classic BTrack default odf. )
+
+the tempo estimates generated from an acf buffer should also actually correspond to some time in the past. exactly where is debatable and will end up being an arbitrary call. the latest it could reasonably correspond to would be the ( acf window length / 2 ) in the past, relative to the odf samples ( so this shift is on top of the odf timebase shift above, to get real audio or wall clock time ). there's an argument to be made that actually it should correspond to somewhere even farther back ( maybe even the average of the two ranges used to compute the tempo selected, although that would make the offset observed-tempo dependent and introduce all kinds of checken-and-egg nightmares, so we're gonna chose to not do that thanks. )
+
+### design / implementation choices
+
+#### choice of odf
+
+#### acf type and length
+
+#### tempo range
+
+#### tempo observation spacing / distribution
+
+#### tempo transition weightings
+
 ### operation
 
 on audio -> compute odf sample
@@ -50,3 +68,4 @@ on cumulative obs invalidation ->
 *   invalidate beats
 
 that's.... i think the entire workflow, actually. cool.
+
